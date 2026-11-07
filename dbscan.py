@@ -28,7 +28,7 @@ def _region_queries(X, eps, leaf_size=30):
     """
     try:
         from scipy.spatial import cKDTree
-        tree = cKDTree(X, leaf_size=leaf_size)
+        tree = cKDTree(X, leafsize=leaf_size)
         return [tree.query_ball_point(X[i], r=eps) for i in range(len(X))]
     except ImportError:
         return _region_queries_bf(X, eps)
