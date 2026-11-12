@@ -14,7 +14,7 @@ Proceedings of KDD-96, pp. 226–231.
 
 - Understand the DBSCAN algorithm.
 - Implement DBSCAN from scratch using Python.
-- Reproduce selected experiments from the paper.
+- Recreate small examples inspired by the paper.
 - Compare DBSCAN with other clustering algorithms.
 - Investigate limitations and possible improvements.
 
@@ -34,18 +34,31 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-Generates the same two-moons dataset for DBSCAN, K-means, and CLARANS.
-DBSCAN uses `eps=0.2` and `min_pts=4`; the other algorithms are given
-`n_clusters=2`. Random seeds are fixed at 42 for reproducibility.
+Runs DBSCAN, K-means and CLARANS on three small datasets:
 
-The demo prints cluster/noise counts, adjusted Rand index (ARI) against
-the generated labels, and clustering runtime in seconds. ARI includes all
-points, including any DBSCAN noise points; 1.0 means a perfect match.
-Timings are single runs on this small dataset, not a scaling benchmark.
+- `compact`: four round clusters with different sizes (104 points).
+- `nonconvex`: four curved clusters (160 points).
+- `noisy`: mixed shapes with 15 added outliers (147 points).
 
-Figures are saved in `figures/`: the original `two_moons.png`, individual
-`two_moons_dbscan.png`, `two_moons_kmeans.png`, and `two_moons_clarans.png`
-plots, plus a side-by-side `two_moons_comparison.png`.
+These are our own examples inspired by Figures 1, 5 and 6 of the paper,
+not the original coordinates. `datasets.py` generates them with seed 42,
+and `main.py` saves copies in `data/` with columns `x,y,label` (`-1` is noise).
+The labels are only used for evaluation, not given to the algorithms.
+
+DBSCAN uses MinPts=4 and eps=0.55, 0.22 and 0.32 respectively. Both
+baselines get the correct cluster count, k=4. These settings were chosen
+for the examples, so they don't show that DBSCAN always works this well.
+
+The script prints cluster counts, noise counts, ARI and median runtime
+from three runs after warm-up, using one numerical thread. ARI includes
+noise as a label. These small datasets aren't a runtime scaling benchmark.
+
+Charts and `results.csv` go in `figures/synthetic/`. Each comparison shows
+the generated labels beside the three algorithms. To just save the charts:
+
+```bash
+python main.py --no-show
+```
 
 ## Baseline algorithms
 
@@ -107,13 +120,5 @@ uses the fitted estimator to access core sample indices and labels.
 
 ## Results
 
-On the default two-moons dataset with the parameters above:
-
-| Algorithm | Clusters | Noise points | ARI |
-| --- | ---: | ---: | ---: |
-| DBSCAN | 2 | 0 | 1.000 |
-| K-means | 2 | 0 | 0.254 |
-| CLARANS | 2 | 0 | 0.311 |
-
-These results compare recovery of the two curved moons on this dataset;
-they do not establish performance across other cluster shapes or datasets.
+See `figures/synthetic/results.csv` for the latest scores and timings.
+The comparison charts show where the algorithms agree with the generated labels.
