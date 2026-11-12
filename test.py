@@ -99,7 +99,7 @@ def test_against_sklearn():
         X = _blobs(n=400, centers=4, std=0.6, seed=seed, noise=30)
         eps, mp = 0.8, 5
         ours = dbscan(X, eps, mp)
-        sk = SkDBSCAN(eps=eps, min_samples=mp).fit_predict(X)
+        sk = SkDBSCAN(eps=eps, min_samples=mp).fit(X)
 
         sk_core = np.zeros(len(X), bool)
         sk_core[sk.core_sample_indices_] = True
@@ -107,7 +107,7 @@ def test_against_sklearn():
 
         assert np.array_equal(our_core, sk_core), \
             f"seed={seed}: core point sets differ"
-        ari = adjusted_rand_score(ours[our_core], sk[our_core])
+        ari = adjusted_rand_score(ours[our_core], sk.labels_[our_core])
         assert ari > 0.999, f"seed={seed}: core point partition ARI={ari:.4f}"
 
 
